@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chess-backend
+
+logging:
+  level:
+    com.chess: DEBUG
+    org.springframework.web.socket: DEBUG

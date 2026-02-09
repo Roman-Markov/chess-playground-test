@@ -138,6 +138,23 @@ chess_sandbox/
 - **Preview**: `npm run preview`
 - **Lint**: `npm run lint`
 
+## Deployment
+
+For deploying the application to production servers, see the comprehensive deployment documentation:
+
+📁 **[docs/deployment/](./docs/deployment/)** - Complete deployment guides
+
+**Quick Links:**
+- 🚀 [Quick Start Deployment](./docs/deployment/QUICKSTART_DEPLOY.md) - Deploy in 10 minutes
+- 📊 [Deployment Options](./docs/deployment/DEPLOYMENT_OPTIONS.md) - Compare hosting options
+- 🔧 [Full Deployment Guide](./docs/deployment/DEPLOY.md) - Production-ready setup
+- 📝 [Deployment Cheatsheet](./docs/deployment/CHEATSHEET.md) - Commands and troubleshooting
+
+**Recommended for MVP (Free):**
+- Backend: Render.com (Free Web Service)
+- Frontend: Vercel (Free Hobby Plan)
+- Cost: $0/month
+
 ## API Documentation
 
 ### REST Endpoints

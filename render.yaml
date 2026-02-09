@@ -1,0 +1,36 @@
+# Render.com конфигурация для деплоя Chess 6x6
+# Документация: https://render.com/docs/blueprint-spec
+
+services:
+  # Backend Spring Boot
+  - type: web
+    name: chess-backend
+    env: java
+    region: frankfurt  # Ближайший к России регион
+    plan: free  # Бесплатный tier
+    buildCommand: cd backend && ./gradlew clean build -x test
+    startCommand: cd backend && java -jar build/libs/*.jar
+    envVars:
+      - key: SERVER_PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: ALLOWED_ORIGINS
+        value: https://chess-6x6.onrender.com
+    healthCheckPath: /api/health
+    
+  # Frontend React + Vite
+  - type: web
+    name: chess-frontend
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: cd frontend && npm install --legacy-peer-deps && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://chess-backend.onrender.com/api/*
+      - type: rewrite
+        source: /ws/*
+        destination: https://chess-backend.onrender.com/ws/*

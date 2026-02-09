@@ -1,0 +1,10 @@
+# Файлы, которые не нужно загружать на Render
+node_modules/
+.git/
+.idea/
+*.log
+.DS_Store
+*.swp
+build/
+dist/
+.gradle/

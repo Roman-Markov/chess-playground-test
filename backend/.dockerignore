@@ -1,0 +1,8 @@
+# Не копировать в Docker образ
+build/
+.gradle/
+out/
+*.log
+.DS_Store
+*.swp
+*.jar
