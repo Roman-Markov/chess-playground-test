@@ -7,7 +7,6 @@ export class WebSocketService {
 
   constructor(url: string = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws') {
     this.url = url;
-    console.log('🔌 WebSocket connecting to:', this.url);
   }
 
   connect(onConnect: () => void, onError: (error: any) => void): void {
