@@ -24,7 +24,7 @@
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 /* Cell colors */
@@ -110,9 +110,10 @@
   font-size: 56px;
   user-select: none;
   cursor: grab;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: piece-appear 0.3s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: piece-appear 0.2s ease;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  will-change: transform, opacity;
 }
 
 @keyframes piece-appear {
@@ -156,9 +157,9 @@
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
 }
 
-/* Piece movement animation */
+/* Piece movement animation (faster for optimistic updates) */
 .chess-piece.moving {
-  animation: smooth-move 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: smooth-move 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes smooth-move {
@@ -170,6 +171,21 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* Optimistic/pending state - subtle opacity while waiting for server */
+.chess-piece.pending {
+  opacity: 0.85;
+  animation: pending-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes pending-pulse {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
