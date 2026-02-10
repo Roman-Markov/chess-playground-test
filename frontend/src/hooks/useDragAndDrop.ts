@@ -1,4 +1,4 @@
-import { useState, DragEvent } from 'react';
+import { useState, type DragEvent } from 'react';
 import type { Position } from '../types/Position';
 
 export const useDragAndDrop = () => {
@@ -14,7 +14,7 @@ export const useDragAndDrop = () => {
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const onDrop = (e: DragEvent, position: Position): Position | null => {
+  const onDrop = (e: DragEvent, _position: Position): Position | null => {
     e.preventDefault();
     const from = draggedFrom;
     setDraggedFrom(null);

@@ -1,4 +1,4 @@
-import type { Piece, PieceColor, PieceType } from '../types/Piece';
+import type { Piece, PieceColor } from '../types/Piece';
 import { type Position, positionEquals } from '../types/Position';
 import type { GameState } from '../types/GameState';
 
