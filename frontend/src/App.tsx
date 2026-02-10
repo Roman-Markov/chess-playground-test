@@ -13,7 +13,8 @@ function App() {
     // Create a new game on mount
     const createGame = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/games', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        const response = await fetch(`${apiUrl}/api/games`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
