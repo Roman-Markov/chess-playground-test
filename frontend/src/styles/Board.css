@@ -58,7 +58,7 @@
   }
 }
 
-/* Valid move indicator */
+/* Valid move indicator (faster for instant feedback) */
 .chess-cell.valid-move {
   position: relative;
 }
@@ -68,19 +68,19 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 0, 0.3);
-  border: 2px solid rgba(255, 215, 0, 0.6);
-  animation: highlight-valid 1s ease-in-out infinite;
+  background-color: rgba(255, 255, 0, 0.35);
+  border: 2px solid rgba(255, 215, 0, 0.7);
+  animation: highlight-valid 0.7s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes highlight-valid {
   0%, 100% {
-    opacity: 0.5;
-    transform: scale(0.9);
+    opacity: 0.6;
+    transform: scale(0.92);
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.9;
     transform: scale(1);
   }
 }
