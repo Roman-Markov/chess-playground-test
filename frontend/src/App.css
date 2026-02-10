@@ -17,9 +17,60 @@
   letter-spacing: 2px;
 }
 
-.connection-status {
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   margin-top: 10px;
+}
+
+.connection-status {
   font-size: 14px;
+}
+
+.you-play-as {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.color-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+  color: #333;
+}
+
+.share-link {
+  margin-top: 12px;
+  max-width: 100%;
+}
+
+.share-label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.share-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.share-input::placeholder {
+  color: rgba(255,255,255,0.7);
 }
 
 .connected {
@@ -86,6 +137,108 @@
 
 .btn-primary:active {
   transform: translateY(0);
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-large {
+  padding: 16px 28px;
+  font-size: 18px;
+}
+
+/* Lobby */
+.lobby-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.lobby {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  width: 100%;
+}
+
+.lobby h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.lobby-subtitle {
+  margin: 0 0 24px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.lobby-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lobby-divider {
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.lobby-join {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lobby-input {
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.lobby-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.lobby-join-as {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lobby-radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.lobby-error {
+  margin: 0;
+  color: #c62828;
+  font-size: 14px;
 }
 
 .instructions {

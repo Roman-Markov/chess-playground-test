@@ -3,13 +3,14 @@ import type { GameState } from '../types/GameState';
 import { type Position, positionEquals } from '../types/Position';
 import { useWebSocket } from './useWebSocket';
 import { getLegalMoves } from '../services/validation';
-import type { Piece } from '../types/Piece';
+import type { Piece, PieceColor } from '../types/Piece';
 
 interface UseGameProps {
   gameId?: string;
+  myColor?: PieceColor | null;
 }
 
-export const useGame = ({ gameId }: UseGameProps = {}) => {
+export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
   const [gameState, setGameState] = useState<GameState>({
     gameId: gameId || '',
     board: Array(6).fill(null).map(() => Array(6).fill(null)),
@@ -72,12 +73,16 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
     }
   }, [connected, gameState.gameId]);
 
+  const canMove = myColor === null || gameState.currentPlayer === myColor;
+
   const handleCellClick = (position: Position) => {
+    if (!canMove) return;
+
     const piece = gameState.board[position.row]?.[position.col];
 
     // If no cell is selected
     if (!gameState.selectedCell) {
-      // Select the cell if it has a piece of the current player
+      // Select the cell if it has a piece of the current player (and we're allowed to move it)
       if (piece && piece.color === gameState.currentPlayer) {
         // 🚀 OPTIMISTIC: Calculate legal moves instantly on client
         const legalMoves = getLegalMoves(position, gameState);
