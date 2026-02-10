@@ -14,6 +14,8 @@ function App() {
     const createGame = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+        console.log('🔗 API URL:', apiUrl);
+        console.log('🔌 WS URL:', import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws');
         const response = await fetch(`${apiUrl}/api/games`, {
           method: 'POST',
           headers: {
