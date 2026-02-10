@@ -2,15 +2,17 @@ import { createPortal } from 'react-dom';
 import type { Position } from '../types/Position';
 import type { PieceType } from '../types/Piece';
 
+type PromotionPieceType = 'QUEEN' | 'ROOK' | 'BISHOP' | 'KNIGHT';
+
 interface PromotionDialogProps {
   from: Position;
   to: Position;
   onChoose: (pieceType: PieceType) => void;
 }
 
-const PROMOTION_PIECES: PieceType[] = ['QUEEN', 'ROOK', 'BISHOP', 'KNIGHT'];
+const PROMOTION_PIECES: PromotionPieceType[] = ['QUEEN', 'ROOK', 'BISHOP', 'KNIGHT'];
 
-const LABELS: Record<PieceType, string> = {
+const LABELS: Record<PromotionPieceType, string> = {
   QUEEN: 'Queen',
   ROOK: 'Rook',
   BISHOP: 'Bishop',
