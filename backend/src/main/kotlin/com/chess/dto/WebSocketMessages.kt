@@ -69,7 +69,9 @@ data class MoveMadeMessage(
 
 data class InvalidMoveMessage(
     val gameId: String,
-    val reason: String
+    val reason: String,
+    val from: PositionDto? = null,
+    val to: PositionDto? = null
 )
 
 data class LegalMovesMessage(

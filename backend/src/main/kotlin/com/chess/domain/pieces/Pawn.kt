@@ -67,29 +67,23 @@ class Pawn(color: PieceColor) : Piece(color, PieceType.PAWN) {
     }
     
     /**
-     * Check if pawn can perform en passant capture
+     * Check if pawn can perform en passant capture.
+     * Enemy just did a double move to lastMove.to. We capture to the square they passed over.
+     * The capturing pawn must be on the same rank as the enemy pawn that just moved.
      */
     fun canEnPassant(from: Position, to: Position, board: Board, lastMove: Move?): Boolean {
         if (lastMove == null) return false
-        
+
         val direction = if (color == PieceColor.WHITE) 1 else -1
-        val expectedEnemyRow = if (color == PieceColor.WHITE) 4 else 1
-        
-        // Check if pawn is on the correct row for en passant
-        if (from.row != expectedEnemyRow) return false
-        
-        // Check if last move was a pawn double move
+
         if (lastMove.piece.type != PieceType.PAWN) return false
         if (!lastMove.isPawnDoubleMove()) return false
-        
-        // Check if the enemy pawn is adjacent
-        if (lastMove.to.row != from.row) return false
+
+        val passedOverRow = (lastMove.from.row + lastMove.to.row) / 2
+        if (to.row != passedOverRow || to.col != lastMove.to.col) return false
         if (Math.abs(lastMove.to.col - from.col) != 1) return false
-        
-        // Check if target square is behind the enemy pawn
-        if (to.row != from.row + direction) return false
-        if (to.col != lastMove.to.col) return false
-        
+
+        if (from.row != lastMove.to.row) return false
         return true
     }
     

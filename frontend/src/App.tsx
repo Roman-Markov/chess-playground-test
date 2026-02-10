@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Board } from './components/Board';
 import { GameInfo } from './components/GameInfo';
+import { PromotionDialog } from './components/PromotionDialog';
 import { useGame } from './hooks/useGame';
 import './App.css';
 
 function App() {
   const [gameId, setGameId] = useState<string>('');
-  const { gameState, connected, handleCellClick, updateGameState } = useGame({ gameId });
+  const { gameState, connected, handleCellClick, updateGameState, promotionPending, completePromotion } = useGame({ gameId });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,6 +60,14 @@ function App() {
           )}
         </div>
       </header>
+
+      {promotionPending && (
+        <PromotionDialog
+          from={promotionPending.from}
+          to={promotionPending.to}
+          onChoose={(pieceType) => completePromotion(pieceType)}
+        />
+      )}
 
       <div className="game-container">
         <div className="board-container">

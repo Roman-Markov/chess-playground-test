@@ -19,29 +19,42 @@ export const Board = ({ gameState, onCellClick }: BoardProps) => {
     return selectedCell !== null && positionEquals(selectedCell, position);
   };
 
-  return (
-    <div className="chess-board">
-      {[5, 4, 3, 2, 1, 0].map(row => (
-        <div key={row} className="board-row">
-          {[0, 1, 2, 3, 4, 5].map(col => {
-            const position: Position = { row, col };
-            const piece = board[row]?.[col] || null;
-            const isDark = (row + col) % 2 === 1;
+  // row 0 = низ (белые), row 5 = верх (чёрные); col 0..5 = a..f
+  const files = ['a', 'b', 'c', 'd', 'e', 'f'];
+  const rowsFromTop = [5, 4, 3, 2, 1, 0]; // на экране: сверху вниз
 
-            return (
-              <Cell
-                key={`${row}-${col}`}
-                position={position}
-                piece={piece}
-                isDark={isDark}
-                selected={isSelected(position)}
-                validMove={isValidMove(position)}
-                onClick={() => onCellClick(position)}
-              />
-            );
-          })}
+  return (
+    <div className="chess-board-wrapper">
+      <div className="chess-board">
+        {rowsFromTop.map((row) => (
+          <div key={row} className="board-row">
+            <span className="board-rank" aria-hidden>{row + 1}</span>
+            {[0, 1, 2, 3, 4, 5].map(col => {
+              const position: Position = { row, col };
+              const piece = board[row]?.[col] || null;
+              const isDark = (row + col) % 2 === 1;
+
+              return (
+                <Cell
+                  key={`${row}-${col}`}
+                  position={position}
+                  piece={piece}
+                  isDark={isDark}
+                  selected={isSelected(position)}
+                  validMove={isValidMove(position)}
+                  onClick={() => onCellClick(position)}
+                />
+              );
+            })}
+          </div>
+        ))}
+        <div className="board-files">
+          <span className="board-file-spacer" aria-hidden />
+          {files.map((f, col) => (
+            <span key={col} className="board-file" aria-hidden>{f}</span>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

@@ -60,22 +60,30 @@ class CheckDetector {
      */
     fun hasAnyLegalMoves(game: Game): Boolean {
         val pieces = game.board.getPieces(game.currentPlayer)
-        
         for ((position, piece) in pieces) {
-            val possibleMoves = piece.getValidMoves(position, game.board)
-            
-            for (targetPosition in possibleMoves) {
-                // Test if this move would leave the king in check
-                val testBoard = game.board.copy()
-                testBoard.movePiece(position, targetPosition)
-                
-                if (!isKingInCheck(game.currentPlayer, testBoard)) {
-                    return true // Found at least one legal move
+            val possibleMoves = piece.getValidMoves(position, game.board).toMutableList()
+            // Include en passant for pawns
+            if (piece is com.chess.domain.pieces.Pawn) {
+                val lastMove = game.getLastMove()
+                if (lastMove != null && lastMove.isPawnDoubleMove()) {
+                    val passedOverRow = (lastMove.from.row + lastMove.to.row) / 2
+                    val ourRowOk = position.row == lastMove.to.row
+                    if (ourRowOk && Math.abs(lastMove.to.col - position.col) == 1) {
+                        possibleMoves.add(Position(passedOverRow, lastMove.to.col))
+                    }
                 }
             }
+            for (target in possibleMoves) {
+                val testBoard = game.board.copy()
+                testBoard.movePiece(position, target)
+                if (piece is com.chess.domain.pieces.Pawn && piece.canEnPassant(position, target, game.board, game.getLastMove())) {
+                    val capturedRow = if (piece.color == PieceColor.WHITE) target.row - 1 else target.row + 1
+                    testBoard.setPiece(Position(capturedRow, target.col), null)
+                }
+                if (!isKingInCheck(game.currentPlayer, testBoard)) return true
+            }
         }
-        
-        return false // No legal moves found
+        return false
     }
 
     /**

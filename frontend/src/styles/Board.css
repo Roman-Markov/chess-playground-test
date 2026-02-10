@@ -1,5 +1,12 @@
 /* Chess Board Styles with Animations */
 
+.chess-board-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
 .chess-board {
   display: inline-block;
   border: 3px solid #333;
@@ -13,6 +20,40 @@
   display: flex;
   margin: 0;
   padding: 0;
+  align-items: center;
+}
+
+.board-rank {
+  width: 22px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  user-select: none;
+}
+
+.board-files {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  min-height: 28px;
+  background: #f0f0f0;
+}
+
+.board-files .board-file-spacer {
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.board-file {
+  width: 80px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #555;
+  user-select: none;
 }
 
 /* Chess Cell */

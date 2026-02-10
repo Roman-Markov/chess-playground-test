@@ -25,6 +25,8 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
 
   const { connected, subscribe, send } = useWebSocket();
 
+  const [promotionPending, setPromotionPending] = useState<{ from: Position; to: Position } | null>(null);
+
   useEffect(() => {
     if (connected && gameState.gameId) {
       // Subscribe to game updates
@@ -39,19 +41,26 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
             selectedCell: null,
             validMoves: [],
           };
-          
-          // Update server state reference
           serverStateRef.current = newState;
-          pendingMoveRef.current = null; // Clear pending move
-          
+          pendingMoveRef.current = null;
+          setPromotionPending(null);
           setGameState(newState);
         }
       });
 
-      // Subscribe to legal moves updates (fallback, we use client-side now)
+      // Subscribe to errors (e.g. promotion required)
+      subscribe(`/topic/game/${gameState.gameId}/error`, (message: any) => {
+        if (message.reason === 'Promotion piece required' && message.from && message.to) {
+          setPromotionPending({
+            from: { row: message.from.row, col: message.from.col },
+            to: { row: message.to.row, col: message.to.col },
+          });
+        }
+      });
+
+      // Subscribe to legal moves updates (fallback)
       subscribe(`/topic/game/${gameState.gameId}/legal-moves`, (message: any) => {
         if (message.legalMoves) {
-          // Only update if we don't have client-calculated moves
           setGameState(prev => {
             if (prev.validMoves.length === 0) {
               return { ...prev, validMoves: message.legalMoves };
@@ -100,13 +109,24 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
       return;
     }
 
-    // If clicking a valid move, make the move
-    const isValidMove = gameState.validMoves.some(move => 
+    // If clicking a valid move, make the move (or show promotion dialog)
+    const isValidMove = gameState.validMoves.some(move =>
       positionEquals(move, position)
     );
 
     if (isValidMove) {
-      makeMove(gameState.selectedCell, position);
+      const movingPiece = gameState.board[gameState.selectedCell!.row]?.[gameState.selectedCell!.col];
+      const isPromotionMove =
+        movingPiece?.type === 'PAWN' &&
+        ((movingPiece.color === 'WHITE' && position.row === 5) ||
+          (movingPiece.color === 'BLACK' && position.row === 0));
+
+      if (isPromotionMove) {
+        setPromotionPending({ from: gameState.selectedCell!, to: position });
+        setGameState((prev) => ({ ...prev, selectedCell: null, validMoves: [] }));
+        return;
+      }
+      makeMove(gameState.selectedCell!, position);
     } else if (piece && piece.color === gameState.currentPlayer) {
       // Select a different piece
       // 🚀 OPTIMISTIC: Calculate legal moves instantly
@@ -140,36 +160,51 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
       return;
     }
 
-    // 🚀 OPTIMISTIC UPDATE: Move piece immediately on client
     const newBoard: (Piece | null)[][] = gameState.board.map(row => [...row]);
-    const movingPiece = newBoard[from.row][from.col];
-    
+    const movingPiece = newBoard[from.row][from.col] ?? newBoard[to.row][to.col];
+
     if (movingPiece) {
-      // Save current state for potential rollback
       serverStateRef.current = gameState;
       pendingMoveRef.current = { from, to };
-      
-      // Apply move optimistically
-      newBoard[to.row][to.col] = movingPiece;
+
+      newBoard[to.row][to.col] = promotion
+        ? { color: movingPiece.color, type: promotion as Piece['type'] }
+        : movingPiece;
       newBoard[from.row][from.col] = null;
-      
-      // Update state immediately (instant visual feedback!)
+
+      const wasEnPassant =
+        movingPiece.type === 'PAWN' &&
+        to.col !== from.col &&
+        gameState.board[to.row][to.col] === null &&
+        gameState.lastMove &&
+        Math.abs(gameState.lastMove.to.row - gameState.lastMove.from.row) === 2;
+      if (wasEnPassant) {
+        const capturedRow = movingPiece.color === 'WHITE' ? to.row - 1 : to.row + 1;
+        newBoard[capturedRow][to.col] = null;
+      }
+
       setGameState(prev => ({
         ...prev,
         board: newBoard,
+        currentPlayer: prev.currentPlayer === 'WHITE' ? 'BLACK' : 'WHITE',
         selectedCell: null,
         validMoves: [],
         lastMove: { from, to },
       }));
     }
 
-    // Send to server for validation (background)
     send('/app/game/move', {
       gameId: gameState.gameId,
       from: { row: from.row, col: from.col },
       to: { row: to.row, col: to.col },
       promotion,
     });
+  };
+
+  const completePromotion = (pieceType: string) => {
+    if (!promotionPending) return;
+    makeMove(promotionPending.from, promotionPending.to, pieceType);
+    setPromotionPending(null);
   };
 
   const updateGameState = (newState: Partial<GameState>) => {
@@ -185,5 +220,7 @@ export const useGame = ({ gameId }: UseGameProps = {}) => {
     handleCellClick,
     makeMove,
     updateGameState,
+    promotionPending,
+    completePromotion,
   };
 };

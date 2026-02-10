@@ -27,9 +27,15 @@ class MoveValidator(private val checkDetector: CheckDetector) {
             return ValidationResult.Invalid("Invalid move for ${piece.type.name}")
         }
 
-        // Check if the move would leave the king in check
+        // Check if the move would leave the king in check (or move king into check)
         val testBoard = game.board.copy()
-        testBoard.movePiece(from, to)
+        if (piece is Pawn && piece.canEnPassant(from, to, game.board, game.getLastMove())) {
+            testBoard.movePiece(from, to)
+            val capturedPawnRow = if (piece.color == PieceColor.WHITE) to.row - 1 else to.row + 1
+            testBoard.setPiece(Position(capturedPawnRow, to.col), null)
+        } else {
+            testBoard.movePiece(from, to)
+        }
         if (checkDetector.isKingInCheck(piece.color, testBoard)) {
             return ValidationResult.Invalid("Move would leave king in check")
         }
@@ -47,13 +53,36 @@ class MoveValidator(private val checkDetector: CheckDetector) {
             return emptyList()
         }
 
-        val moves = piece.getValidMoves(from, game.board)
-        
+        val moves = piece.getValidMoves(from, game.board).toMutableList()
+
+        // Add en passant capture if applicable (pawn only)
+        if (piece is Pawn) {
+            val lastMove = game.getLastMove()
+            if (lastMove != null && lastMove.isPawnDoubleMove()) {
+                val passedOverRow = (lastMove.from.row + lastMove.to.row) / 2
+                val ourRowOk = from.row == lastMove.to.row
+                if (ourRowOk && Math.abs(lastMove.to.col - from.col) == 1) {
+                    moves.add(Position(passedOverRow, lastMove.to.col))
+                }
+            }
+        }
+
         // Filter out moves that would leave king in check
         return moves.filter { to ->
             val testBoard = game.board.copy()
-            testBoard.movePiece(from, to)
+            applyMoveForValidation(game, from, to, piece, testBoard)
             !checkDetector.isKingInCheck(piece.color, testBoard)
+        }
+    }
+
+    /**
+     * Apply a move to a board for validation (handles en passant: remove captured pawn)
+     */
+    private fun applyMoveForValidation(game: Game, from: Position, to: Position, piece: Piece, board: Board) {
+        board.movePiece(from, to)
+        if (piece is Pawn && piece.canEnPassant(from, to, game.board, game.getLastMove())) {
+            val capturedPawnRow = if (piece.color == PieceColor.WHITE) to.row - 1 else to.row + 1
+            board.setPiece(Position(capturedPawnRow, to.col), null)
         }
     }
 

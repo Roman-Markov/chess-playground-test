@@ -80,7 +80,9 @@ class WebSocketController(
             is MoveResult.PromotionRequired -> {
                 val response = InvalidMoveMessage(
                     gameId = message.gameId,
-                    reason = "Promotion piece required"
+                    reason = "Promotion piece required",
+                    from = message.from,
+                    to = message.to
                 )
                 messagingTemplate.convertAndSend("/topic/game/${message.gameId}/error", response)
             }
