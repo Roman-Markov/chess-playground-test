@@ -105,14 +105,15 @@
   }
 }
 
-/* Chess Piece */
+/* Chess Piece (font symbols) */
 .chess-piece {
+  font-family: 'Noto Sans Symbols 2', 'Noto Sans Symbols', 'DejaVu Sans', sans-serif;
   font-size: 56px;
+  line-height: 1;
   user-select: none;
   cursor: grab;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   animation: piece-appear 0.2s ease;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   will-change: transform, opacity;
 }
 
@@ -139,22 +140,22 @@
 
 .chess-piece.WHITE {
   color: #f5f5f5;
-  text-shadow: 
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
+  text-shadow:
+    -1px -1px 0 #333,
+    1px -1px 0 #333,
+    -1px 1px 0 #333,
+    1px 1px 0 #333;
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
 }
 
 .chess-piece.BLACK {
   color: #2b2b2b;
-  text-shadow: 
-    -0.5px -0.5px 0 #fff,
-    0.5px -0.5px 0 #fff,
-    -0.5px 0.5px 0 #fff,
-    0.5px 0.5px 0 #fff;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+  text-shadow:
+    -0.5px -0.5px 0 #666,
+    0.5px -0.5px 0 #666,
+    -0.5px 0.5px 0 #666,
+    0.5px 0.5px 0 #666;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Piece movement animation (faster for optimistic updates) */
@@ -335,7 +336,7 @@
   .chess-cell {
     width: 50px;
     height: 50px;
-    min-width: 48px; /* Минимум для touch target */
+    min-width: 48px;
     min-height: 48px;
   }
   

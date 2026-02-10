@@ -1,6 +1,3 @@
-// Placeholder for Piece component
-// This renders a chess piece using Unicode symbols
-
 import type { Piece as PieceData } from '../types/Piece';
 import { getPieceSymbol } from '../utils/pieceSymbols';
 
