@@ -2,6 +2,8 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .app-header {
@@ -49,6 +51,7 @@
 .share-link {
   margin-top: 12px;
   max-width: 100%;
+  width: 100%;
 }
 
 .share-label {
@@ -60,13 +63,14 @@
 
 .share-input {
   width: 100%;
-  max-width: 400px;
+  max-width: min(400px, calc(100% - 8px));
   padding: 8px 10px;
   font-size: 12px;
   border-radius: 6px;
   border: 1px solid rgba(255,255,255,0.3);
   background: rgba(255,255,255,0.15);
   color: white;
+  box-sizing: border-box;
 }
 
 .share-input::placeholder {
@@ -89,14 +93,20 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 30px;
+  gap: 20px;
   flex-wrap: wrap;
-  max-width: 1400px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
 }
 
 .board-container {
   flex: 0 0 auto;
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .info-container {
@@ -324,9 +334,37 @@
   .app {
     padding: 10px;
   }
-  
+
+  .app-header {
+    margin-bottom: 16px;
+  }
+
   .app-header h1 {
-    font-size: 28px;
+    font-size: 24px;
+  }
+
+  .header-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-container {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .game-info {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .app {
+    padding: 8px;
+  }
+
+  .app-header h1 {
+    font-size: 20px;
   }
 }
 

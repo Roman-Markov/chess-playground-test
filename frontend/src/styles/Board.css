@@ -5,6 +5,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
+  max-width: 100%;
 }
 
 .chess-board {
@@ -352,24 +353,36 @@
   background-color: #000000;
 }
 
-/* Responsive design */
+/* Responsive design - board must fit viewport */
 @media (max-width: 768px) {
   .chess-cell {
     width: 60px;
     height: 60px;
   }
-  
+
+  .board-file {
+    width: 60px;
+  }
+
+  .board-rank {
+    width: 20px;
+    font-size: 13px;
+  }
+
+  .board-files .board-file-spacer {
+    width: 20px;
+  }
+
   .chess-piece {
     font-size: 42px;
   }
-  
+
   .game-info {
     max-width: 100%;
   }
-  
-  /* Улучшить touch-область */
+
   .chess-cell {
-    touch-action: manipulation; /* Быстрый клик, без двойного тапа */
+    touch-action: manipulation;
   }
 }
 
@@ -380,9 +393,84 @@
     min-width: 48px;
     min-height: 48px;
   }
-  
+
+  .board-file {
+    width: 50px;
+  }
+
+  .board-rank {
+    width: 18px;
+    font-size: 12px;
+  }
+
+  .board-files .board-file-spacer {
+    width: 18px;
+  }
+
+  .chess-board {
+    padding: 6px;
+  }
+
   .chess-piece {
-    font-size: 36px;
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 360px) {
+  .chess-cell {
+    width: 44px;
+    height: 44px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .board-file {
+    width: 44px;
+    font-size: 14px;
+  }
+
+  .board-rank {
+    width: 16px;
+    font-size: 11px;
+  }
+
+  .board-files .board-file-spacer {
+    width: 16px;
+  }
+
+  .chess-piece {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 320px) {
+  .chess-cell {
+    width: 36px;
+    height: 36px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .board-file {
+    width: 36px;
+    font-size: 12px;
+  }
+
+  .board-rank {
+    width: 14px;
+    font-size: 10px;
+  }
+
+  .board-files .board-file-spacer {
+    width: 14px;
+  }
+
+  .chess-board {
+    padding: 4px;
+  }
+
+  .chess-piece {
+    font-size: 24px;
   }
 }
 
