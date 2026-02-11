@@ -12,7 +12,7 @@ interface UseGameProps {
 
 export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
   const [gameState, setGameState] = useState<GameState>({
-    gameId: gameId || '',
+    gameId: '',
     board: Array(6).fill(null).map(() => Array(6).fill(null)),
     currentPlayer: 'WHITE',
     status: 'ACTIVE',
@@ -29,9 +29,9 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
   const [promotionPending, setPromotionPending] = useState<{ from: Position; to: Position } | null>(null);
 
   useEffect(() => {
-    if (connected && gameState.gameId) {
-      // Subscribe to game updates
-      subscribe(`/topic/game/${gameState.gameId}`, (message: any) => {
+    if (connected && gameId) {
+      // Subscribe to game updates (use prop gameId so we subscribe when opening via link)
+      subscribe(`/topic/game/${gameId}`, (message: any) => {
         if (message.gameState) {
           const newState = {
             ...gameState,
@@ -50,7 +50,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
       });
 
       // Subscribe to errors (e.g. promotion required)
-      subscribe(`/topic/game/${gameState.gameId}/error`, (message: any) => {
+      subscribe(`/topic/game/${gameId}/error`, (message: any) => {
         if (message.reason === 'Promotion piece required' && message.from && message.to) {
           setPromotionPending({
             from: { row: message.from.row, col: message.from.col },
@@ -60,7 +60,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
       });
 
       // Subscribe to legal moves updates (fallback)
-      subscribe(`/topic/game/${gameState.gameId}/legal-moves`, (message: any) => {
+      subscribe(`/topic/game/${gameId}/legal-moves`, (message: any) => {
         if (message.legalMoves) {
           setGameState(prev => {
             if (prev.validMoves.length === 0) {
@@ -71,7 +71,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
         }
       });
     }
-  }, [connected, gameState.gameId]);
+  }, [connected, gameId]);
 
   const canMove = myColor === null || gameState.currentPlayer === myColor;
 
@@ -96,7 +96,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
         // Still request from server for verification (background)
         if (connected) {
           send('/app/game/legal-moves', {
-            gameId: gameState.gameId,
+            gameId: gameId || gameState.gameId,
             position: { row: position.row, col: position.col },
           });
         }
@@ -145,7 +145,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
       
       if (connected) {
         send('/app/game/legal-moves', {
-          gameId: gameState.gameId,
+          gameId: gameId || gameState.gameId,
           position: { row: position.row, col: position.col },
         });
       }
@@ -199,7 +199,7 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
     }
 
     send('/app/game/move', {
-      gameId: gameState.gameId,
+      gameId: gameId || gameState.gameId,
       from: { row: from.row, col: from.col },
       to: { row: to.row, col: to.col },
       promotion,
