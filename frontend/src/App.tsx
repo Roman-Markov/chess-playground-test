@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Board } from './components/Board';
-import { GameInfo } from './components/GameInfo';
 import { Lobby } from './components/Lobby';
 import { PromotionDialog } from './components/PromotionDialog';
 import { useGame } from './hooks/useGame';
@@ -105,19 +104,29 @@ function App() {
   }
 
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?gameId=${gameId}` : '';
+  const [copyFeedback, setCopyFeedback] = useState(false);
+
+  const handleCopyLink = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyFeedback(true);
+      setTimeout(() => setCopyFeedback(false), 1500);
+    } catch {
+      // fallback: select so user can Cmd+C
+      const input = document.querySelector<HTMLInputElement>('.share-input');
+      input?.select();
+    }
+  };
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>♔ Chess 6x6 ♚</h1>
+        <h1 className="app-title">
+          ♔ Chess 6x6 ♚
+          <span className={`connection-dot ${connected ? 'connected' : 'disconnected'}`} aria-label={connected ? 'Connected' : 'Disconnected'} />
+        </h1>
         <div className="header-row">
-          <div className="connection-status">
-            {connected ? (
-              <span className="connected">● Connected</span>
-            ) : (
-              <span className="disconnected">● Disconnected</span>
-            )}
-          </div>
           <div className="you-play-as">
             <span>You play:</span>
             <select
@@ -134,8 +143,13 @@ function App() {
         </div>
         {shareUrl && (
           <div className="share-link">
-            <label className="share-label">Share link:</label>
-            <input type="text" readOnly value={shareUrl} className="share-input" onFocus={(e) => e.target.select()} />
+            <div className="share-field">
+              <span className="share-prefix">Share link:</span>
+              <input type="text" readOnly value={shareUrl} className="share-input" onFocus={(e) => e.target.select()} />
+              <button type="button" className="share-copy-btn" onClick={handleCopyLink} title="Copy link">
+                {copyFeedback ? '✓ Copied' : 'Copy'}
+              </button>
+            </div>
           </div>
         )}
       </header>
@@ -150,12 +164,33 @@ function App() {
 
       <div className="game-container">
         <div className="board-container">
+          <div className="turn-bar">
+            <span
+              className={`turn-bar-color ${
+                gameState.status === 'CHECKMATE'
+                  ? gameState.currentPlayer === 'WHITE'
+                    ? 'black'
+                    : 'white'
+                  : gameState.status === 'STALEMATE'
+                    ? 'stalemate'
+                    : gameState.currentPlayer.toLowerCase()
+              }`}
+              aria-hidden
+            />
+            <span className="turn-bar-text">
+              {gameState.status === 'CHECK'
+                ? `${gameState.currentPlayer === 'WHITE' ? 'White' : 'Black'} is in check!`
+                : gameState.status === 'CHECKMATE'
+                  ? `Checkmate! ${gameState.currentPlayer === 'WHITE' ? 'Black' : 'White'} wins!`
+                  : gameState.status === 'STALEMATE'
+                    ? 'Stalemate - Draw!'
+                    : `${gameState.currentPlayer === 'WHITE' ? 'White' : 'Black'}'s turn`}
+            </span>
+          </div>
           <Board gameState={gameState} onCellClick={handleCellClick} />
         </div>
 
         <div className="info-container">
-          <GameInfo gameState={gameState} />
-
           <div className="game-controls">
             <button
               className="btn btn-primary"
