@@ -49,14 +49,6 @@ export const Lobby = ({
         <div className="lobby-divider">or</div>
 
         <form className="lobby-join" onSubmit={handleJoin}>
-          <input
-            type="text"
-            className="lobby-input"
-            placeholder="Game ID"
-            value={joinId}
-            onChange={(e) => setJoinId(e.target.value)}
-            disabled={joinLoading}
-          />
           <div className="lobby-join-as">
             <span>Join as:</span>
             <label className="lobby-radio">
@@ -77,6 +69,20 @@ export const Lobby = ({
               />
               Black
             </label>
+          </div>
+          <div className="lobby-game-id-row">
+            <label htmlFor="lobby-game-id" className="lobby-game-id-label">
+              Game ID:
+            </label>
+            <input
+              id="lobby-game-id"
+              type="text"
+              className="lobby-input"
+              placeholder="Paste or enter game ID"
+              value={joinId}
+              onChange={(e) => setJoinId(e.target.value)}
+              disabled={joinLoading}
+            />
           </div>
           <button type="submit" className="btn btn-secondary" disabled={joinLoading || !joinId.trim()}>
             {joinLoading ? 'Joining…' : 'Join game'}

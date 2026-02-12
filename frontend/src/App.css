@@ -414,6 +414,25 @@
   flex-wrap: wrap;
 }
 
+.lobby-game-id-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lobby-game-id-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.lobby-game-id-row .lobby-input {
+  flex: 1;
+  min-width: 200px;
+}
+
 .lobby-radio {
   display: flex;
   align-items: center;
