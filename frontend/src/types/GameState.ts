@@ -1,6 +1,7 @@
 import type { Piece, PieceColor } from './Piece';
 import type { Position } from './Position';
 import type { Move } from './Move';
+import type { GameMode } from './Annotation';
 
 export type GameStatus = 'ACTIVE' | 'CHECK' | 'CHECKMATE' | 'STALEMATE';
 
@@ -12,4 +13,6 @@ export interface GameState {
   lastMove?: Move;
   selectedCell: Position | null;
   validMoves: Position[];
+  mode?: GameMode;
+  creatorId?: string | null;
 }

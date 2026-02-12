@@ -30,6 +30,28 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
 
   useEffect(() => {
     if (connected && gameId) {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const refetchGame = () => {
+        fetch(`${apiUrl}/api/games/${gameId}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => {
+            if (data) {
+              setGameState((prev) => ({
+                ...prev,
+                board: data.board,
+                currentPlayer: data.currentPlayer,
+                status: data.status,
+                lastMove: data.lastMove,
+                mode: data.mode,
+                creatorId: data.creatorId,
+                selectedCell: null,
+                validMoves: [],
+              }));
+            }
+          })
+          .catch(() => {});
+      };
+
       // Subscribe to game updates (use prop gameId so we subscribe when opening via link)
       subscribe(`/topic/game/${gameId}`, (message: any) => {
         if (message.gameState) {
@@ -39,6 +61,8 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
             currentPlayer: message.gameState.currentPlayer,
             status: message.gameState.status,
             lastMove: message.gameState.lastMove,
+            mode: message.gameState.mode ?? gameState.mode,
+            creatorId: message.gameState.creatorId ?? gameState.creatorId,
             selectedCell: null,
             validMoves: [],
           };
@@ -46,6 +70,9 @@ export const useGame = ({ gameId, myColor = null }: UseGameProps = {}) => {
           pendingMoveRef.current = null;
           setPromotionPending(null);
           setGameState(newState);
+        } else if (message.gameId && !message.gameState) {
+          // Edit/board event without full state (e.g. EditModeStarted, PieceAdded) — refetch
+          refetchGame();
         }
       });
 

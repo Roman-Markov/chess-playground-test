@@ -24,22 +24,14 @@ class EditorController(
         @RequestBody request: StartEditingRequest
     ): ResponseEntity<Any> {
         val result = gameService.startEditing(gameId, request.creatorId)
-        
         return when (result) {
             is EditResult.Success -> {
-                // Broadcast to all clients
-                messagingTemplate.convertAndSend(
-                    "/topic/game/$gameId",
-                    EditModeStartedMessage(gameId)
-                )
+                messagingTemplate.convertAndSend("/topic/game/$gameId", EditModeStartedMessage(gameId))
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.NotAuthorized -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(mapOf("error" to "Not authorized"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.NotAuthorized -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(mapOf("error" to "Not authorized"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
         }
     }
 
@@ -49,20 +41,14 @@ class EditorController(
         @RequestBody request: StopEditingRequest
     ): ResponseEntity<Any> {
         val result = gameService.stopEditing(gameId, request.currentPlayer)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = EditModeEndedMessage(
-                    gameId = gameId,
-                    gameState = result.game.toDto()
-                )
+                val message = EditModeEndedMessage(gameId, result.game.toDto())
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -72,26 +58,17 @@ class EditorController(
         @PathVariable gameId: String,
         @RequestBody request: AddPieceRequest
     ): ResponseEntity<Any> {
-        val piece = parsePiece(request.piece) ?: return ResponseEntity.badRequest()
-            .body(mapOf("error" to "Invalid piece"))
-        
+        val piece = parsePiece(request.piece) ?: return ResponseEntity.badRequest().body(mapOf("error" to "Invalid piece"))
         val position = request.position.toDomain()
         val result = gameService.addPiece(gameId, piece, position)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = PieceAddedMessage(
-                    gameId = gameId,
-                    piece = request.piece,
-                    position = request.position
-                )
+                val message = PieceAddedMessage(gameId, request.piece, request.position)
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -103,20 +80,14 @@ class EditorController(
     ): ResponseEntity<Any> {
         val position = request.position.toDomain()
         val result = gameService.removePiece(gameId, position)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = PieceRemovedMessage(
-                    gameId = gameId,
-                    position = request.position
-                )
+                val message = PieceRemovedMessage(gameId, request.position)
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -129,21 +100,14 @@ class EditorController(
         val from = request.from.toDomain()
         val to = request.to.toDomain()
         val result = gameService.movePieceEditor(gameId, from, to)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = PieceMovedEditorMessage(
-                    gameId = gameId,
-                    from = request.from,
-                    to = request.to
-                )
+                val message = PieceMovedEditorMessage(gameId, request.from, request.to)
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -151,19 +115,13 @@ class EditorController(
     @PostMapping("/clear")
     fun clearBoard(@PathVariable gameId: String): ResponseEntity<Any> {
         val result = gameService.clearBoard(gameId)
-        
         return when (result) {
             is EditResult.Success -> {
-                messagingTemplate.convertAndSend(
-                    "/topic/game/$gameId",
-                    BoardClearedMessage(gameId)
-                )
+                messagingTemplate.convertAndSend("/topic/game/$gameId", BoardClearedMessage(gameId))
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -171,20 +129,14 @@ class EditorController(
     @PostMapping("/reset-standard")
     fun resetToStandard(@PathVariable gameId: String): ResponseEntity<Any> {
         val result = gameService.resetToStandard(gameId)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = BoardResetMessage(
-                    gameId = gameId,
-                    gameState = result.game.toDto()
-                )
+                val message = BoardResetMessage(gameId, result.game.toDto())
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -192,20 +144,14 @@ class EditorController(
     @PostMapping("/reset-custom")
     fun resetToCustom(@PathVariable gameId: String): ResponseEntity<Any> {
         val result = gameService.resetToCustom(gameId)
-        
         return when (result) {
             is EditResult.Success -> {
-                val message = BoardResetMessage(
-                    gameId = gameId,
-                    gameState = result.game.toDto()
-                )
+                val message = BoardResetMessage(gameId, result.game.toDto())
                 messagingTemplate.convertAndSend("/topic/game/$gameId", message)
                 ResponseEntity.ok(result.game.toDto())
             }
-            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(mapOf("error" to "Game not found"))
-            is EditResult.InvalidOperation -> ResponseEntity.badRequest()
-                .body(mapOf("error" to result.reason))
+            is EditResult.GameNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Game not found"))
+            is EditResult.InvalidOperation -> ResponseEntity.badRequest().body(mapOf("error" to result.reason))
             else -> ResponseEntity.badRequest().body(mapOf("error" to "Unknown error"))
         }
     }
@@ -216,7 +162,6 @@ class EditorController(
         } catch (e: IllegalArgumentException) {
             return null
         }
-        
         return when (pieceDto.type) {
             "KING" -> King(color)
             "QUEEN" -> Queen(color)

@@ -300,7 +300,7 @@ class GameService(
         }
         
         if (game.moveHistory.isEmpty()) {
-            return EditResult.InvalidOperation("No moves to undo")
+            return EditResult.Success(game) // no-op: nothing to undo
         }
         
         // Rebuild game state by replaying all moves except the last one

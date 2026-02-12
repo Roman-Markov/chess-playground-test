@@ -91,6 +91,87 @@
   animation: pulse-selected 1.5s ease-in-out infinite;
 }
 
+/* Edit mode: piece selected for move */
+.chess-cell.selected-for-move {
+  box-shadow: inset 0 0 0 4px #667eea;
+  background-color: rgba(102, 126, 234, 0.35) !important;
+}
+
+/* Piece palette - above/below board */
+.piece-palette {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  min-height: 48px;
+}
+
+.piece-palette-top {
+  align-self: stretch;
+}
+
+.piece-palette-bottom {
+  align-self: stretch;
+}
+
+.palette-piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.palette-piece:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.palette-piece.selected {
+  border-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.4);
+  box-shadow: 0 0 0 2px #4CAF50;
+}
+
+.palette-piece-symbol {
+  font-size: 28px;
+  line-height: 1;
+  user-select: none;
+}
+
+.palette-piece-white .palette-piece-symbol {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.palette-piece-black .palette-piece-symbol {
+  color: #1a1a1a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .palette-piece {
+    width: 40px;
+    height: 40px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .palette-piece-symbol {
+    font-size: 24px;
+  }
+}
+
 @keyframes pulse-selected {
   0%, 100% {
     box-shadow: inset 0 0 0 4px #4CAF50;

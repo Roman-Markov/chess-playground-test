@@ -6,6 +6,39 @@
   box-sizing: border-box;
 }
 
+.app-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: -20px -20px 20px -20px;
+  background: #c62828;
+  color: white;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.app-error-text {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.app-error-copy,
+.app-error-dismiss {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.app-error-dismiss {
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 10px;
+}
+
 .app-header {
   text-align: center;
   margin-bottom: 30px;
@@ -177,6 +210,80 @@
 
 .turn-bar-text {
   white-space: nowrap;
+}
+
+.turn-bar-custom {
+  margin-right: 8px;
+  opacity: 0.95;
+}
+
+.board-with-overlay {
+  position: relative;
+  display: inline-block;
+  --cell-size: 80px;
+  --board-rank-width: 22px;
+  --board-padding: 10px;
+  --board-border: 3px;
+}
+
+.annotations-overlay-wrapper {
+  position: absolute;
+  left: calc(var(--board-border) + var(--board-padding) + var(--board-rank-width));
+  top: calc(var(--board-border) + var(--board-padding));
+  width: calc(6 * var(--cell-size));
+  height: calc(6 * var(--cell-size));
+  pointer-events: none;
+}
+
+.annotations-overlay-wrapper svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.annotations-capture {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
+/* Editor controls - desktop & mobile friendly */
+.editor-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.editor-controls-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.editor-btn {
+  width: 100%;
+  min-height: 44px;
+  font-size: 14px;
+}
+
+.editor-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+}
+
+.editor-select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .info-container {
@@ -396,6 +503,10 @@
 }
 
 @media (max-width: 768px) {
+  .board-with-overlay {
+    --cell-size: 60px;
+    --board-rank-width: 20px;
+  }
   .app-header h1 {
     font-size: 36px;
   }
@@ -406,6 +517,10 @@
 }
 
 @media (max-width: 480px) {
+  .board-with-overlay {
+    --cell-size: 50px;
+    --board-rank-width: 18px;
+  }
   .app {
     padding: 10px;
   }
@@ -448,6 +563,10 @@
 }
 
 @media (max-width: 360px) {
+  .board-with-overlay {
+    --cell-size: 44px;
+    --board-rank-width: 16px;
+  }
   .app {
     padding: 8px;
   }

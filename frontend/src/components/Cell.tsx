@@ -8,14 +8,32 @@ interface CellProps {
   isDark: boolean;
   selected: boolean;
   validMove: boolean;
+  selectedForMove?: boolean;
   onClick: () => void;
+  onDoubleClick?: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  onMouseUp?: (e: React.MouseEvent) => void;
+  onMouseMove?: (position: Position) => void;
 }
 
-export const Cell = ({ position, piece, isDark, selected, validMove, onClick }: CellProps) => {
+export const Cell = ({
+  position,
+  piece,
+  isDark,
+  selected,
+  validMove,
+  selectedForMove = false,
+  onClick,
+  onDoubleClick,
+  onContextMenu,
+  onMouseUp,
+  onMouseMove,
+}: CellProps) => {
   const cellClasses = [
     'chess-cell',
     isDark ? 'dark' : 'light',
     selected ? 'selected' : '',
+    selectedForMove ? 'selected-for-move' : '',
     validMove ? 'valid-move' : '',
   ].filter(Boolean).join(' ');
 
@@ -23,6 +41,10 @@ export const Cell = ({ position, piece, isDark, selected, validMove, onClick }: 
     <div
       className={cellClasses}
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
+      onContextMenu={onContextMenu}
+      onMouseUp={onMouseUp}
+      onMouseMove={() => onMouseMove?.(position)}
       data-row={position.row}
       data-col={position.col}
     >
