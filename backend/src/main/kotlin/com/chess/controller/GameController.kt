@@ -21,8 +21,8 @@ class GameController(private val gameService: GameService) {
     }
 
     @PostMapping("/games")
-    fun createGame(): GameStateDto {
-        val game = gameService.createGame()
+    fun createGame(@RequestParam(required = false) creatorId: String?): GameStateDto {
+        val game = gameService.createGame(creatorId)
         return game.toDto()
     }
 

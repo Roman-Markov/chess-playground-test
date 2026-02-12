@@ -15,6 +15,15 @@ enum class GameStatus {
 }
 
 /**
+ * Game mode - determines gameplay rules and features
+ */
+enum class GameMode {
+    STANDARD,  // Normal game with standard rules
+    EDITING,   // Position editing mode (no moves allowed)
+    CUSTOM     // Game started from custom position (allows undo, reset)
+}
+
+/**
  * Represents a chess game state
  */
 data class Game(
@@ -30,7 +39,11 @@ data class Game(
     val blackKingsideRookMoved: Boolean = false,
     val blackQueensideRookMoved: Boolean = false,
     val createdAt: Instant = Instant.now(),
-    val lastMoveAt: Instant? = null
+    val lastMoveAt: Instant? = null,
+    // New fields for editing/custom games (defaults for backward compatibility)
+    val mode: GameMode = GameMode.STANDARD,
+    val creatorId: String? = null,
+    val customStartPosition: Board? = null  // Saved board state after editing
 ) {
     /**
      * Get the last move made in the game

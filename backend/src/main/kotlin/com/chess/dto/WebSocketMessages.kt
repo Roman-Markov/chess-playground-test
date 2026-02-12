@@ -18,7 +18,22 @@ enum class MessageType {
     MOVE_MADE,
     INVALID_MOVE,
     LEGAL_MOVES,
-    ERROR
+    ERROR,
+    
+    // Editing mode
+    EDIT_MODE_STARTED,
+    EDIT_MODE_ENDED,
+    PIECE_ADDED,
+    PIECE_REMOVED,
+    PIECE_MOVED_EDITOR,  // different from MOVE_MADE (no validation)
+    BOARD_CLEARED,
+    BOARD_RESET,
+    MOVE_UNDONE,
+    
+    // Annotations
+    ANNOTATION_ADDED,
+    ANNOTATION_REMOVED,
+    ANNOTATIONS_CLEARED
 }
 
 /**
@@ -126,6 +141,68 @@ data class MoveDto(
 }
 
 /**
+ * Editing mode WebSocket messages
+ */
+data class EditModeStartedMessage(
+    val gameId: String
+)
+
+data class EditModeEndedMessage(
+    val gameId: String,
+    val gameState: GameStateDto
+)
+
+data class PieceAddedMessage(
+    val gameId: String,
+    val piece: PieceDto,
+    val position: PositionDto
+)
+
+data class PieceRemovedMessage(
+    val gameId: String,
+    val position: PositionDto
+)
+
+data class PieceMovedEditorMessage(
+    val gameId: String,
+    val from: PositionDto,
+    val to: PositionDto
+)
+
+data class BoardClearedMessage(
+    val gameId: String
+)
+
+data class BoardResetMessage(
+    val gameId: String,
+    val gameState: GameStateDto
+)
+
+data class MoveUndoneMessage(
+    val gameId: String,
+    val gameState: GameStateDto
+)
+
+/**
+ * Annotation WebSocket messages
+ */
+data class AnnotationAddedMessage(
+    val gameId: String,
+    val annotation: AnnotationDto
+)
+
+data class AnnotationRemovedMessage(
+    val gameId: String,
+    val position: PositionDto? = null,
+    val from: PositionDto? = null,
+    val to: PositionDto? = null
+)
+
+data class AnnotationsClearedMessage(
+    val gameId: String
+)
+
+/**
  * Helper extensions
  */
 fun Game.toDto(): GameStateDto {
@@ -141,6 +218,8 @@ fun Game.toDto(): GameStateDto {
         board = boardArray,
         currentPlayer = currentPlayer,
         status = status,
-        lastMove = getLastMove()
+        lastMove = getLastMove(),
+        mode = mode.name,
+        creatorId = creatorId
     )
 }

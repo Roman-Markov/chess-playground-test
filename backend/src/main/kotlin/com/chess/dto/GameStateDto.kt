@@ -10,7 +10,9 @@ data class GameStateDto(
     val board: Array<Array<PieceDto?>>,
     val currentPlayer: PieceColor,
     val status: GameStatus,
-    val lastMove: Move? = null
+    val lastMove: Move? = null,
+    val mode: String = "STANDARD",  // STANDARD | EDITING | CUSTOM
+    val creatorId: String? = null
 )
 
 data class PieceDto(

@@ -76,7 +76,7 @@ function App() {
     if (gameId && gameState.gameId !== gameId) {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       fetch(`${apiUrl}/api/games/${gameId}`)
-        .then((r) => r.ok ? r.json() : null)
+        .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
           if (data) updateGameState(data);
         })
@@ -84,7 +84,25 @@ function App() {
     }
   }, [gameId]);
 
-  const prefillGameId = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('gameId') || '';
+  const prefillGameId =
+    new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('gameId') || '';
+
+  const shareUrl =
+    typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?gameId=${gameId}` : '';
+  const [copyFeedback, setCopyFeedback] = useState(false);
+
+  const handleCopyLink = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyFeedback(true);
+      setTimeout(() => setCopyFeedback(false), 1500);
+    } catch {
+      // fallback: select so user can Cmd+C
+      const input = document.querySelector<HTMLInputElement>('.share-input');
+      input?.select();
+    }
+  };
 
   if (!gameId) {
     return (
@@ -102,22 +120,6 @@ function App() {
       </div>
     );
   }
-
-  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?gameId=${gameId}` : '';
-  const [copyFeedback, setCopyFeedback] = useState(false);
-
-  const handleCopyLink = async () => {
-    if (!shareUrl) return;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopyFeedback(true);
-      setTimeout(() => setCopyFeedback(false), 1500);
-    } catch {
-      // fallback: select so user can Cmd+C
-      const input = document.querySelector<HTMLInputElement>('.share-input');
-      input?.select();
-    }
-  };
 
   return (
     <div className="app">

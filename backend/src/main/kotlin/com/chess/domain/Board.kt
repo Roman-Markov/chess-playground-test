@@ -154,4 +154,19 @@ class Board {
         }
         return sb.toString()
     }
+
+    companion object {
+        /**
+         * Create an empty board with no pieces
+         */
+        fun empty(): Board {
+            val board = Board()
+            for (row in 0..5) {
+                for (col in 0..5) {
+                    board.grid[row][col] = null
+                }
+            }
+            return board
+        }
+    }
 }
