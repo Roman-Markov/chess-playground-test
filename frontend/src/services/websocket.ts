@@ -40,10 +40,9 @@ export class WebSocketService {
   }
 
   subscribe(destination: string, callback: (message: any) => void): void {
-    if (!this.client) {
-      throw new Error('WebSocket not connected');
+    if (!this.client?.connected) {
+      return; // avoid STOMP "no underlying connection" when not yet connected or disconnected
     }
-
     this.client.subscribe(destination, (message) => {
       const body = JSON.parse(message.body);
       callback(body);

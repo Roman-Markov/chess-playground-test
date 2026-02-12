@@ -6,7 +6,7 @@ const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export function useAnnotations(gameId: string) {
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
-  const { subscribe, send } = useWebSocket();
+  const { subscribe, connected } = useWebSocket();
 
   useEffect(() => {
     if (!gameId) return;
@@ -18,7 +18,7 @@ export function useAnnotations(gameId: string) {
   }, [gameId]);
 
   useEffect(() => {
-    if (!gameId) return;
+    if (!gameId || !connected) return;
     subscribe(`/topic/game/${gameId}/annotations`, (message: any) => {
       if (message.annotation) {
         setAnnotations((prev) => [...prev, message.annotation]);
@@ -43,7 +43,7 @@ export function useAnnotations(gameId: string) {
         setAnnotations([]);
       }
     });
-  }, [gameId, subscribe]);
+  }, [gameId, connected, subscribe]);
 
   const addAnnotation = useCallback(
     async (annotation: Annotation) => {
