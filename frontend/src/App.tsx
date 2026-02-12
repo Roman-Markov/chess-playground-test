@@ -412,7 +412,6 @@ function App() {
             editMode={editor.editMode}
             isCustom={editor.isCustom}
             isCreator={gameState.creatorId === clientId}
-            currentPlayer={gameState.currentPlayer}
             onStartEdit={() => editor.startEditing().catch((e) => setAppError(formatAppError('EDIT_START', e instanceof Error ? e.message : String(e))))}
             onStopEdit={(color) => editor.stopEditing(color).catch((e) => setAppError(formatAppError('EDIT_STOP', e instanceof Error ? e.message : String(e))))}
             onClearBoard={() => editor.clearBoard().catch((e) => setAppError(formatAppError('EDIT_CLEAR', e instanceof Error ? e.message : String(e))))}

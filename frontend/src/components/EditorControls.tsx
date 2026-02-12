@@ -5,7 +5,6 @@ interface EditorControlsProps {
   editMode: boolean;
   isCustom: boolean;
   isCreator: boolean;
-  currentPlayer: PieceColor;
   onStartEdit: () => void;
   onStopEdit: (currentPlayer: PieceColor) => void;
   onClearBoard: () => void;
@@ -20,7 +19,6 @@ export function EditorControls({
   editMode,
   isCustom,
   isCreator,
-  currentPlayer,
   onStartEdit,
   onStopEdit,
   onClearBoard,
